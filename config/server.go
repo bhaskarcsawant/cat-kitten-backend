@@ -35,11 +35,12 @@ func StartServer() error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/set", controllers.SetUserPointsHandler)
 	mux.HandleFunc("/increment", controllers.IncrementUserPointsHandler)
-	mux.HandleFunc("/getall", controllers.GetAllUserPointsHandler)
+	mux.HandleFunc("/getall/{status}", controllers.GetAllUserPointsHandler)
 
 	// Apply CORS middleware
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"https://kat-kitten.vercel.app"}, // Change this to your Vercel domain
+		AllowedOrigins: []string{"https://kat-kitten.vercel.app"}, // Change this to your Vercel domain
+		// AllowedOrigins:   []string{"*"},                             // Change this to your Vercel domain
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},  // Add other methods if needed
 		AllowedHeaders:   []string{"Content-Type", "Authorization"}, // Add other headers if needed
 		AllowCredentials: true,

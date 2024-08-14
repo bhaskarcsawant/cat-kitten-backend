@@ -83,8 +83,17 @@ func IncrementUserGamePoints(username string, increment int) (redis.Z, error) {
 }
 
 // GetAllUserPointsDesc retrieves all user points in descending order
-func GetAllUserPointsDesc() []redis.Z {
+func GetAllUserPointsDesc(status string) []redis.Z {
 	// Check if cache is valid
+	if status == "1" {
+		users, err := rdb.ZRevRangeWithScores(ctx, "user:points", 0, -1).Result()
+		if err != nil {
+			log.Fatalf("Could not retrieve user points: %v", err)
+		}
+		cacheData = users
+		cacheExpiry = time.Now().Add(cacheTimeout)
+		return users
+	}
 	if time.Now().Before(cacheExpiry) && cacheData != nil {
 		fmt.Println("Returning cached data")
 		return cacheData
